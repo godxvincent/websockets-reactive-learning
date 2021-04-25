@@ -23,7 +23,7 @@ public class GreetingWebSocketConfiguration {
     @Bean
     public SimpleUrlHandlerMapping simpleUrlHandlerMapping(WebSocketHandler webSocketHandler) {
         // Por alguna razón toco establecer un orden en el mapeq
-        return new SimpleUrlHandlerMapping(Map.of("/ws/greetings", webSocketHandler), -1);
+        return new SimpleUrlHandlerMapping(Map.of("/ws/greetings", webSocketHandler), 0);
     }
 
     /*@Bean
@@ -57,6 +57,7 @@ public class GreetingWebSocketConfiguration {
                             .map(GreetingResponse::getMessage)
                             .map(session::textMessage)
                             .doOnEach(webSocketMessageSignal -> log.info(webSocketMessageSignal.getType()))
+//                            .doOnEach(log::info) // Este recibe el objeto y el toString no es claro así que mejor no manejarlo asi
                             .doFinally(signalType -> log.info("Finally: "+signalType.toString()))
                             .doOnError(throwable -> log.info(throwable.getMessage()));
             return session.send(webSocketMessageFlux);
