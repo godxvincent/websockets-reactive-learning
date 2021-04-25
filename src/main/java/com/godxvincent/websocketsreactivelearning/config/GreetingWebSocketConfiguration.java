@@ -3,6 +3,7 @@ package com.godxvincent.websocketsreactivelearning.config;
 import com.godxvincent.websocketsreactivelearning.models.GreetingRequest;
 import com.godxvincent.websocketsreactivelearning.models.GreetingResponse;
 import com.godxvincent.websocketsreactivelearning.services.GreetingService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Configuration
+@Log4j2
 public class GreetingWebSocketConfiguration {
 
     @Bean
@@ -53,7 +55,10 @@ public class GreetingWebSocketConfiguration {
                             .map(GreetingRequest::new)
                             .flatMap(greetingService::greeting)
                             .map(GreetingResponse::getMessage)
-                            .map(session::textMessage);
+                            .map(session::textMessage)
+                            .doOnEach(webSocketMessageSignal -> log.info(webSocketMessageSignal.getType()))
+                            .doFinally(signalType -> log.info("Finally: "+signalType.toString()))
+                            .doOnError(throwable -> log.info(throwable.getMessage()));
             return session.send(webSocketMessageFlux);
         };
     }
