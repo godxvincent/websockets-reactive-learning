@@ -1,0 +1,16 @@
+<html lang="en">
+<body>
+<script>
+    window.addEventListener('load', function(e) {
+        console.log("llego aquí");
+        var ws = new WebSocket('ws://localhost:8080/ws/greetings');
+        ws.addEventListener('open', function(e) {
+            ws.send('Ricardo Vargas');
+        });
+        ws.addEventListener('message', function(e) {
+            console.log(e.data);
+        });
+    })
+</script>
+</body>
+</html>
